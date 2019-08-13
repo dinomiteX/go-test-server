@@ -1,12 +1,16 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
+
+	"k8s.io/klog"
 )
 
-func TestServer(w http.ResponseWriter, r *http.Request) {
+type logData map[string]interface{}
+
+func testServer(w http.ResponseWriter, r *http.Request) {
 	response := "Failed"
 	sc := http.StatusBadRequest
 	if r.URL.RawPath != "" {
@@ -16,8 +20,26 @@ func TestServer(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(sc)
 	fmt.Fprint(w, response)
 }
+
+func debugMiddleware(w http.ResponseWriter, r *http.Request) {
+	dataJson, err := json.Marshal(logData{
+		"URLPath":              r.URL.Path,
+		"Request Body":         r.Body,
+		"Request Query Params": r.URL.Query(),
+	})
+	if err != nil {
+		klog.Error(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	klog.Info("http-middleware ", string(dataJson))
+
+	testServer(w, r)
+}
+
 func main() {
-	if err := http.ListenAndServe(":8080", http.HandlerFunc(TestServer)); err != nil {
-		log.Fatalf("could not listen on port 8080 %v", err)
+	klog.InitFlags(nil)
+	if err := http.ListenAndServe(":8080", http.HandlerFunc(debugMiddleware)); err != nil {
+		klog.Fatalf("could not listen on port 8080 %v", err)
 	}
 }

@@ -1,0 +1,7 @@
+{
+    "go.formatTool": "goimports",
+    "go.useLanguageServer": true,
+    "go.toolsEnvVars": {
+      "GO111MODULE": "on"
+    }
+}
