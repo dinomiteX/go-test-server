@@ -1,0 +1,28 @@
+apiVersion: v1
+items:
+- apiVersion: extensions/v1beta1
+  kind: Ingress
+  metadata:
+    annotations:
+      kubernetes.io/ingress.class: internal
+    generation: 1
+    name: go-test-server-ingress
+    namespace: go-test-server
+  spec:
+    rules:
+    - host: {{.Values.dnsname}}
+      https:
+        paths:
+        - backend:
+            serviceName: {{ include "go-test-server.fullname" . }}
+            servicePort: 8080
+          path: /
+    tls:
+    - hosts:
+      - {{.Values.dnsname}}
+      secretName: certificate-secret
+  status:
+    loadBalancer:
+      ingress:
+      - {}
+kind: List

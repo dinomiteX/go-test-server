@@ -1,0 +1,23 @@
+# Default values for go-test-server.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: dinomitex/go-test-server
+  tag: 0.0.1
+  pullPolicy: IfNotPresent
+
+nameOverride: "go-test-server"
+fullnameOverride: ""
+
+dnsname: go-test-server.svc.shs.prd.eu.gs.aws.cloud.vwgroup.com
+
+service:
+  type: ClusterIP
+  port: 8080
+
+proxy:
+no_proxy:
+resources: {}
