@@ -13,7 +13,7 @@ type logData map[string]interface{}
 func testServer(w http.ResponseWriter, r *http.Request) {
 	response := "Failed"
 	sc := http.StatusBadRequest
-	if r.URL.RawPath != "" {
+	if r.URL.EscapedPath() != "" {
 		sc = http.StatusOK
 		response = "Success"
 	}
@@ -22,7 +22,7 @@ func testServer(w http.ResponseWriter, r *http.Request) {
 }
 
 func debugMiddleware(w http.ResponseWriter, r *http.Request) {
-	dataJson, err := json.Marshal(logData{
+	dataJSON, err := json.Marshal(logData{
 		"URLPath":              r.URL.Path,
 		"Request Body":         r.Body,
 		"Request Query Params": r.URL.Query(),
@@ -32,14 +32,14 @@ func debugMiddleware(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	klog.Info("http-middleware ", string(dataJson))
+	klog.Info("http-middleware ", string(dataJSON))
 
 	testServer(w, r)
 }
 
 func main() {
 	klog.InitFlags(nil)
-	if err := http.ListenAndServe(":8080", http.HandlerFunc(debugMiddleware)); err != nil {
+	if err := http.ListenAndServe(":8080", http.StripPrefix("/", http.HandlerFunc(debugMiddleware))); err != nil {
 		klog.Fatalf("could not listen on port 8080 %v", err)
 	}
 }
