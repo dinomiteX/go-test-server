@@ -2,7 +2,6 @@ apiVersion: certmanager.k8s.io/v1alpha1
 kind: Certificate
 metadata:
   name: certificate
-  namespace: {{.Values.namespace}}
 spec:
   secretName: certificate-secret
   duration: 2160h

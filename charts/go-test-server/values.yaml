@@ -14,8 +14,6 @@ fullnameOverride: ""
 
 dnsname: go-test-server.svc.shs.prd.eu.gs.aws.cloud.vwgroup.com
 
-namespace: go-test-server
-
 service:
   type: ClusterIP
   port: 8080

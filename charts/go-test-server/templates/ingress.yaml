@@ -7,7 +7,6 @@ items:
       kubernetes.io/ingress.class: internal
     generation: 1
     name: go-test-server-ingress
-    namespace: {{.Values.namespace}}
   spec:
     rules:
     - host: {{.Values.dnsname}}
